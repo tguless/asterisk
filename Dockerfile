@@ -1,6 +1,6 @@
-FROM debian:10.3
+FROM debian:12.8
 
-ARG ASTERISK_VERSION=17.9.3
+ARG ASTERISK_VERSION=22.1.0
 ARG BCG729_VERSION=1.0.4
 ARG SPANDSP_VERSION=20180108
 
@@ -9,8 +9,12 @@ ENV ASTERISK_BUILD_DEPS='autoconf automake bison build-essential doxygen flex li
             libjansson-dev libncurses5-dev libneon27-dev \
             libnewt-dev libogg-dev libresample1-dev libspandsp-dev libsqlite3-dev \
             libsrtp2-dev libssl-dev libtiff-dev libtool-bin libvorbis-dev \
-            libxml2-dev linux-headers-amd64 python-dev subversion unixodbc-dev \
+            libxml2-dev linux-headers-arm64 python-dev-is-python3 subversion unixodbc-dev \
             uuid-dev'
+
+
+#RUN wget https://ftp.debian.org/debian/pool/main/d/debian-archive-keyring/debian-archive-keyring_2023.1_all.deb
+#RUN sudo dpkg -i debian-archive-keyring_2023.1_all.deb
 
 #build tools
 RUN apt-get update && \
@@ -37,8 +41,8 @@ RUN apt-get update && \
     make menuselect/menuselect menuselect-tree menuselect.makeopts && \
     menuselect/menuselect --disable BUILD_NATIVE \
                           --enable app_confbridge \
-                          --enable app_fax \
-                          --enable app_macro \
+                          # --enable app_fax \
+                          #--enable app_macro \
                           --enable codec_opus \
                           --enable codec_silk \
                           --enable format_mp3 \
@@ -65,7 +69,7 @@ RUN apt-get update && \
     curl https://bitbucket.org/arkadi/asterisk-g72x/get/master.tar.gz | tar xvfz - --strip 1 -C /usr/src/asterisk-g72x && \
     cd /usr/src/asterisk-g72x && \
     ./autogen.sh && \
-    ./configure --with-bcg729 --enable-penryn && \
+    ./configure --with-bcg729 && \
     make && \
     make install && \
 
